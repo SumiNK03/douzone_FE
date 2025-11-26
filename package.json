@@ -1,4 +1,5 @@
 {
+  "homepage" : "https://SumiNK03.github.io/douzone_FE",
   "name": "douzone_fe",
   "private": true,
   "version": "0.0.0",
@@ -9,8 +10,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
-    "homepage" : "https://SumiNK03.github.io/douzone_FE"
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@fontsource/anonymous-pro": "^5.2.8",
