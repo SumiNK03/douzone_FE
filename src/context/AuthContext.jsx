@@ -1,55 +1,58 @@
-// src/context/AuthContext.jsx
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-
-
-// 쿠키 읽기 유틸
-function getCookie(name) {
-  const matches = document.cookie.match(
-    new RegExp('(?:^|; )' + name + '=([^;]*)')
-  );
-  return matches ? decodeURIComponent(matches[1]) : null;
-}
+import { createContext, useContext, useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState({ username: null, role: null });
-  const navigate = useNavigate();
+    const [user, setUser] = useState({ id: "", name: "", role: "", token: "" });
 
-  // 초기화: 쿠키 읽기
-  useEffect(() => {
-    const role = getCookie("role");
-    const name = getCookie("name");
-    const teacherId = getCookie("teacherId");
-    const studentId = getCookie("studentId");
+    const login = (token) => {
+        try {
+            // 토큰 디코딩해서 클레임 추출
+            const decoded = jwtDecode(token);
+            const { id, name, role } = decoded;
+            
+            // localStorage에 토큰만 저장 (클레임은 필요할 때 디코딩)
+            localStorage.setItem("token", token);
+            
+            // state 업데이트
+            setUser({ id, name, role, token });
+        } catch (error) {
+            console.error("토큰 디코딩 실패:", error);
+        }
+    };
 
-    if (teacherId || studentId) {
-      setUser({
-        username: name
-        , role: role || "student"
-        , studentId: studentId ? Number(studentId) : null
-        , teacherId: teacherId ? Number(teacherId) : null
-      });
-    }
-  }, []);
+    const logout = () => {
+        localStorage.removeItem("token");
+        setUser({ id: "", name: "", role: "", token: "" });
+    };
 
-  const login = (username, role) => setUser({ username, role });
-  const logout = () => {
-    setUser({ username: null, role: null });
-    // 쿠키 삭제
-    document.cookie = "teacherId=; max-age=0";
-    document.cookie = "studentId=; max-age=0";
-    document.cookie = "role=; max-age=0";
-    document.cookie = "name=; max-age=0";
-    navigate("/");
-  };
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            try {
+                const decoded = jwtDecode(token);
+                setUser({
+                    id: decoded.id || "",
+                    name: decoded.name || "",
+                    role: decoded.role || "",
+                    token: token
+                });
+            } catch (error) {
+                console.error("저장된 토큰 디코딩 실패:", error);
+                localStorage.removeItem("token");
+            }
+        }
+    }, []);
 
-  return (
-    <AuthContext.Provider value={{ user, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+    return (
+        <AuthContext.Provider value={{ user, login, logout }}>
+            {children}
+        </AuthContext.Provider>
+    );
 }
 
-export const useAuth = () => useContext(AuthContext);
+// Hook으로 쉽게 사용
+export function useAuth() {
+    return useContext(AuthContext);
+}

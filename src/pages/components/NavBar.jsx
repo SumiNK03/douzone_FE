@@ -8,12 +8,27 @@ function NavBar() {
     const navigate = useNavigate();
     const { user, logout } = useAuth();
 
-    const isLoggedIn = !!user?.username;
-    const role = user?.role || "student";
+    const isLoggedIn = !!user?.token; // 로그인 여부 (token 존재 확인)
+    const role = user?.role ?? "student"; // 기본값 student
 
-    // 비로그인 상태 메뉴 : 사이트 정보, 로그인, 회원가입
-    // 학생 로그인 상태 메뉴 : 수강신청, 강의실, 마이페이지
-    // 강사 로그인 상태 메뉴 : 내 담당 강좌 조회, 시간표, 마이페이지
+    const menuItems = !isLoggedIn
+        ? [
+              { name: "정보", path: "/siteinfo" },
+              { name: "로그인", path: "/login" },
+              { name: "회원가입", path: "/signup" },
+          ]
+        : role === "student"
+        ? [
+              { name: "수강신청", path: "/enroll" },
+              { name: "강의실", path: "/classroom" },
+              { name: "마이페이지", path: "/mypage" },
+          ]
+        : [
+              { name: "내 담당 강좌", path: "/myclasses" },
+              { name: "시간표", path: "/class" },
+              { name: "마이페이지", path: "/mypage" },
+          ];
+
     return (
         <div className="w-full h-[60px] bg-[#4DBAE7] flex items-center justify-between px-6 font-sans">
             {/* 로고 */}
@@ -24,85 +39,18 @@ function NavBar() {
             />
 
             {/* 메뉴 */}
-            {
-                !isLoggedIn ? (
-                    // A – 로그인 안 했을 때
-                    <div className="flex gap-[20vw]">
-                        <NavLink
-                            to="/siteinfo"
-                            className="font-bold text-xl text-white relative transition-all duration-300 ease-in-out hover:text-white hover:scale-105 cursor-pointer group"
-                        >
-                            정보
-                            <span className="absolute left-1/2 bottom-0 w-0 h-[2px] bg-white transition-all duration-300 ease-in-out group-hover:left-0 group-hover:w-full"></span>
-                        </NavLink>
-                        <NavLink
-                            to="/login"
-                            className="font-bold text-xl text-white relative transition-all duration-300 ease-in-out hover:text-white hover:scale-105 cursor-pointer group"
-                        >
-                            로그인
-                            <span className="absolute left-1/2 bottom-0 w-0 h-[2px] bg-white transition-all duration-300 ease-in-out group-hover:left-0 group-hover:w-full"></span>
-                        </NavLink>
-                        <NavLink
-                            to="/signup"
-                            className="font-bold text-xl text-white relative transition-all duration-300 ease-in-out hover:text-white hover:scale-105 cursor-pointer group"
-                        >
-                            회원가입
-                            <span className="absolute left-1/2 bottom-0 w-0 h-[2px] bg-white transition-all duration-300 ease-in-out group-hover:left-0 group-hover:w-full"></span>
-                        </NavLink>
-                    </div>
-                ) : role === "student" ? (
-                    // B – 로그인 + 학생
-                    <div className="flex gap-[20vw]">
-                        <NavLink
-                            to="/enroll"
-                            className="font-bold text-xl text-white relative transition-all duration-300 ease-in-out hover:text-white hover:scale-105 cursor-pointer group"
-                        >
-                            수강신청
-                            <span className="absolute left-1/2 bottom-0 w-0 h-[2px] bg-white transition-all duration-300 ease-in-out group-hover:left-0 group-hover:w-full"></span>
-                        </NavLink>
-                        <NavLink
-                            to="/classroom"
-                            className="font-bold text-xl text-white relative transition-all duration-300 ease-in-out hover:text-white hover:scale-105 cursor-pointer group"
-                        >
-                            강의실
-                            <span className="absolute left-1/2 bottom-0 w-0 h-[2px] bg-white transition-all duration-300 ease-in-out group-hover:left-0 group-hover:w-full"></span>
-                        </NavLink>
-                        <NavLink
-                            to="/mypage"
-                            className="font-bold text-xl text-white relative transition-all duration-300 ease-in-out hover:text-white hover:scale-105 cursor-pointer group"
-                        >
-                            마이페이지
-                            <span className="absolute left-1/2 bottom-0 w-0 h-[2px] bg-white transition-all duration-300 ease-in-out group-hover:left-0 group-hover:w-full"></span>
-                        </NavLink>
-                    </div>
-                ) : (
-                    // C – 로그인 + 강사
-                    <div className="flex gap-[20vw]">
-                        <NavLink
-                            to="/myclasses"
-                            className="font-bold text-xl text-white relative transition-all duration-300 ease-in-out hover:text-white hover:scale-105 cursor-pointer group"
-                        >
-                            내 담당 강좌
-                            <span className="absolute left-1/2 bottom-0 w-0 h-[2px] bg-white transition-all duration-300 ease-in-out group-hover:left-0 group-hover:w-full"></span>
-                        </NavLink>
-                        <NavLink
-                            to="/class"
-                            className="font-bold text-xl text-white relative transition-all duration-300 ease-in-out hover:text-white hover:scale-105 cursor-pointer group"
-                        >
-                            시간표
-                            <span className="absolute left-1/2 bottom-0 w-0 h-[2px] bg-white transition-all duration-300 ease-in-out group-hover:left-0 group-hover:w-full"></span>
-                        </NavLink>
-                        <NavLink
-                            to="/mypage"
-                            className="font-bold text-xl text-white relative transition-all duration-300 ease-in-out hover:text-white hover:scale-105 cursor-pointer group"
-                        >
-                            마이페이지
-                            <span className="absolute left-1/2 bottom-0 w-0 h-[2px] bg-white transition-all duration-300 ease-in-out group-hover:left-0 group-hover:w-full"></span>
-                        </NavLink>
-                    </div>
-                )
-            }
-
+            <div className="flex gap-[20vw]">
+                {menuItems.map((item) => (
+                    <NavLink
+                        key={item.path}
+                        to={item.path}
+                        className="font-bold text-xl text-white relative transition-all duration-300 ease-in-out hover:text-white hover:scale-105 cursor-pointer group"
+                    >
+                        {item.name}
+                        <span className="absolute left-1/2 bottom-0 w-0 h-[2px] bg-white transition-all duration-300 ease-in-out group-hover:left-0 group-hover:w-full"></span>
+                    </NavLink>
+                ))}
+            </div>
 
             {/* 로그인/로그아웃 버튼 */}
             <button

@@ -20,7 +20,7 @@ function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <div class='w-screen'>
+    <div className='w-screen'>
       <AuthProvider>
       <NavBar />
       <Routes>
