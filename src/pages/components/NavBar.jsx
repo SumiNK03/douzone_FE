@@ -11,6 +11,11 @@ function NavBar() {
     const isLoggedIn = !!user?.token; // 로그인 여부 (token 존재 확인)
     const role = user?.role ?? "student"; // 기본값 student
 
+    const handleLogout = () => {
+        logout();
+        navigate("/");
+    };
+
     const menuItems = !isLoggedIn
         ? [
               { name: "정보", path: "/siteinfo" },
@@ -55,7 +60,7 @@ function NavBar() {
             {/* 로그인/로그아웃 버튼 */}
             <button
                 className="w-[40px] transition-transform duration-200 hover:scale-105 cursor-pointer"
-                onClick={() => (isLoggedIn ? logout() : navigate("/login"))}
+                onClick={() => (isLoggedIn ? handleLogout() : navigate("/login"))}
             >
                 <img className="w-full" src={isLoggedIn ? logoutImg : loginImg} />
             </button>
