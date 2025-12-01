@@ -35,21 +35,21 @@ function NavBar() {
           ];
 
     return (
-        <div className="w-full h-[60px] bg-[#4DBAE7] flex items-center justify-between px-6 font-sans">
+        <div className="w-full h-[60px] bg-[#4DBAE7] flex items-center justify-between px-2 sm:px-6 font-sans">
             {/* 로고 */}
             <img
                 src={logo}
-                className="h-[60px] w-auto cursor-pointer"
+                className="h-10 sm:h-[60px] w-auto cursor-pointer"
                 onClick={() => navigate("/")}
             />
 
             {/* 메뉴 */}
-            <div className="flex gap-[20vw]">
+            <div className="flex gap-4 sm:gap-[20vw]">
                 {menuItems.map((item) => (
                     <NavLink
                         key={item.path}
                         to={item.path}
-                        className="font-bold text-xl text-white relative transition-all duration-300 ease-in-out hover:text-white hover:scale-105 cursor-pointer group"
+                        className="font-bold text-sm sm:text-[clamp(20px,1.5vw,100px)] text-white relative transition-all duration-300 ease-in-out hover:text-white hover:scale-105 cursor-pointer group whitespace-nowrap"
                     >
                         {item.name}
                         <span className="absolute left-1/2 bottom-0 w-0 h-[2px] bg-white transition-all duration-300 ease-in-out group-hover:left-0 group-hover:w-full"></span>
@@ -59,7 +59,7 @@ function NavBar() {
 
             {/* 로그인/로그아웃 버튼 */}
             <button
-                className="w-[40px] transition-transform duration-200 hover:scale-105 cursor-pointer"
+                className="w-[30px] sm:h-[40px] transition-transform duration-200 hover:scale-105 cursor-pointer"
                 onClick={() => (isLoggedIn ? handleLogout() : navigate("/login"))}
             >
                 <img className="w-full" src={isLoggedIn ? logoutImg : loginImg} />
